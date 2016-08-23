@@ -1,0 +1,25 @@
+@import '../../less/mixins.less';
+@import '../../less/variables.less';
+
+@lightSliderColor: @lightBookioBlue;
+@darkSliderColor: @darkBookioBlue;
+
+.SliderComponent {
+    .vertical-gradient(@xx-lightGrayColor, @xxx-lightGrayColor);
+    border: 1px solid @xxx-lightGrayColor;	
+
+	.Bar {
+
+		.vertical-gradient(@lightSliderColor, @darkSliderColor);
+		.drop-shadow(0px, 0px, 2px, 1px, fadeout(black, 85%));		
+		
+		.Gripper {
+		    .vertical-gradient(@darkSliderColor, @lightSliderColor);
+		    .border-radius(100px);
+			.inner-shadow(0px, 0px, 2px, 2px, fadeout(white, 95%));				
+		}
+	}
+	
+}
+
+

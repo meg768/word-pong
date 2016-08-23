@@ -1,0 +1,33 @@
+@import '../../less/mixins.less';
+@import '../../less/variables.less';
+
+.DesktopComponent {
+
+	border: 1px solid @xxx-lightGrayColor;
+	
+	.icon {
+		
+		.image {
+			.border-radius(0.5em);
+			border:0.2em dashed transparent;
+			
+		}
+		.text {
+			color:darken(@bookioBlue, 40%);
+			background:transparent; 
+		}
+		
+		&.selected {
+
+			.image {
+				border:0.2em dashed @bookioBlue;
+			}
+			
+			.text {
+				color:white;
+				background:@bookioBlue; 
+				border-radius: 0.25em;	
+			}
+		}
+	}
+}

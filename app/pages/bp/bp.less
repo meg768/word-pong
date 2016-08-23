@@ -1,0 +1,92 @@
+
+#Betapet {
+
+
+	.cell {
+//		border-radius: 6px;
+	}
+    .board {
+        display: table;
+        font-size: larger;
+
+
+	    .row {
+	        //display: table-row;
+	        vertical-align: middle;
+	        text-align: center;
+	
+		    .TL {
+		        background: #B0B0B0;
+		    }
+		    .NN {
+		        background: #E5DCC6;
+		    }
+		    .TW {
+		        background: #E73A2F;
+		    }
+		    .DW {
+		        background: #E5B91D;
+		    }
+		    .DL {
+		        background: #B1A87A;
+		    }	        
+
+	        .cell {
+		        width:2em;
+		        height:2em;
+	            border:1px solid rgba(255, 255, 255, 1);
+	
+	            &.selected {
+	                outline:1px solid black;
+	                outline-offset: -1px;
+	            }
+	        }
+	    }
+
+    }
+    
+    .letters {
+        display: table;
+		border-spacing: 3px;
+		padding: 1em;
+
+		.row {
+
+	        .cell {
+		        font-size: 150%;
+		        width:2em;
+		        height:2em;
+	            border:1px solid black;
+				background: #C5D5E3;
+	            &.selected {
+	                outline:1px solid black;
+	                outline-offset: 0px;
+
+	            }
+	        }
+			
+		}
+
+    }    
+    	
+
+
+
+	.letters .cell, .board .cell {
+		display: table-cell;		
+		text-align: center;
+		vertical-align: middle;
+		
+		&.has-content {
+		    background: #C5D5E3 !important;
+		    color:black;
+		}
+		
+		//width:2.0em;
+		//height:2.0em;
+		//line-height: 2.0em;
+	}   
+	 
+
+
+}
