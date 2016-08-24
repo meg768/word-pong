@@ -17,25 +17,14 @@ module.exports = React.createClass({
 			<Navbar inverse>
 				<Navbar.Header>
 					<Navbar.Brand>
-						<a href="#">Word Pong</a>
+					<a href="#">Word Pong
+					</a>
 					</Navbar.Brand>
 					<Navbar.Toggle />
 				</Navbar.Header>
 				<Navbar.Collapse>
 					<Nav>
-						<NavItem eventKey={45} href="#/test">Test</NavItem>
-						<NavItem eventKey={1} href="#/home">Home</NavItem>
-						<NavItem eventKey={2} href="#/about">Regler</NavItem>
-						<NavItem eventKey={4} href="#/settings">Settings</NavItem>
-						<NavDropdown eventKey={3} title="Specialare" id="basic-nav-dropdown">
-							<MenuItem eventKey={3.1} href='#/bp'>Betapet</MenuItem>
-							<MenuItem eventKey={3.6} href='#/drag'>Drag/drop</MenuItem>
-							<MenuItem divider />
-							<MenuItem eventKey={3.3} href='#/home'>Användare</MenuItem>
-						</NavDropdown>
-					</Nav>
-					<Nav pullRight>
-						<NavItem eventKey={2} href="#/home">Hem</NavItem>
+						<NavItem eventKey={2} href="#/about">Spelregler</NavItem>
 					</Nav>
 				</Navbar.Collapse>
 			</Navbar>

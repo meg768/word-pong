@@ -1,230 +1,188 @@
-
-
-
-
-
-
-
-
-
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {Jumbotron, Button, Grid, Row, Col, ListGroup, ListGroupItem, PageHeader} from 'react-bootstrap';
+import {extend, isString, isObject, isArray} from '../../scripts/toolbox.js';
 
-import {Jumbotron, Button} from 'react-bootstrap';
-import {Overlay, Clearfix, Row, Col, Grid, Tab, Tabs, Glyphicon, Tooltip, ButtonToolbar, DropdownButton, MenuItem, Popover, Modal, OverlayTrigger} from 'react-bootstrap';
-import {sprintf} from '../../scripts/toolbox.js';
+import {sprintf} from 'yow';
 
-function onSelectAlert(eventKey, href) {
-  alert('Alert from menu item.\neventKey: "' + eventKey + '"\nhref: "' + href + '"');
-}
+class Letter extends React.Component {
 
-
-var Popup = React.createClass({
-
-	
-	getInitialState() {
-		return {visible:false};	
-	},
-
-	onShow() {
-		this.setState({visible:true});
-		
-	},
-	
-	findTarget() {
-		return ReactDOM.findDOMNode(this.props.target);		
-	},
-
-	
-	onHide() {
-		this.setState({visible:false});
-		
-	},
-
+	constructor(...args) {
+		super(...args);
+	};
 
 	render() {
 		var style = {};
-		style.position = 'absolute';
-		style.border   = '1px solid black';
-		style.padding  = 10;
-		
-		<Overlay rootClose={true} show={this.state.visible} onHide={this.onHide} placement="bottom" container={this} target={this.findTarget()}>
+		var innerStyle = {};
+
+		style.border = '0.1em solid hsl(212, 50% , 75%)';
+		style.display = 'inline-block';
+		style.borderRadius = '0.3em';
+		style.width = '1.5em';
+		style.height = '1.5em';
+		style.fontSize = '150%';
+		style.textAlign = 'center';
+		style.background = 'hsl(212,50%,90%)';
+		style.margin = '0.1em 0.1em 0.1em 0.1em';
+
+		innerStyle.position = 'relative';
+		innerStyle.top = '50%';
+		innerStyle.transform = 'translateY(-50%)';
+		innerStyle.color = 'hsl(212,50%,0%)';
+
+		return(
 			<div style={style}>
-				{this.props.children}
+				<div style={innerStyle}>
+					{this.props.letter}
+				</div>
 			</div>
-		</Overlay>
-		
-	}
+		);
 
-});
-
-const Example = React.createClass({
-  getInitialState() {
-    return { show: false };
-  },
-
-  toggle() {
-    this.setState({ show: !this.state.show });
-  },
-  
-
-  onShow() {
-	  this.setState({show:true});
-  },
-  onHide() {
-	  this.setState({show:!this.state.show});
-  },
-
-  render() {
-    const style = {
-      position: 'absolute',
-      //backgroundColor: '#EEE',
-      boxShadow: '0 3px 3px rgba(0, 0, 0, 0.2)',
-      border: '1px solid #CCC',
-      borderRadius: 3,
-      marginLeft: -5,
-      marginTop: 5,
-      padding: 10
-    };
-
-    var popupStyle = {};
-    popupStyle.display = this.state.show ? 'block' : 'none';
-
-	return (
-		<div style={{position:'relative'}}>
-	        <Button ref="target" onClick={this.toggle}>
-	          I am an Overlay target
-	        </Button>
-					<ul className="dropdown-menu" role="menu" style={popupStyle}>
-					      <MenuItem href="#books">Books</MenuItem>
-					      <MenuItem href="#podcasts">Podcasts</MenuItem>
-					      <MenuItem href="#">Tech I Like</MenuItem>
-					      <MenuItem href="#">About me</MenuItem>
-					      <MenuItem href="#" devider/>
-					      <MenuItem href="#addBlog">Add a Blog</MenuItem>
-					</ul>
-		</div>
-	);
-
-  }
-});
-
-function MenuItems() {
-	
-	return (
-    <DropdownButton title="Dropdown">
-      <MenuItem href="#books">Books</MenuItem>
-      <MenuItem href="#podcasts">Podcasts</MenuItem>
-      <MenuItem href="#">Tech I Like</MenuItem>
-      <MenuItem href="#">About me</MenuItem>
-      <MenuItem href="#addBlog">Add a Blog</MenuItem>
-    </DropdownButton>
-
-	);
-	
-/*
-return(
-	
-	
-<div className="dropdown">
-  <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Dropdown
-    <span className="caret"></span>
-  </button>
-  <ul className="dropdown-menu" aria-labelledby="dropdownMenu1" role="menu">
-    <li><a href="#">Action</a></li>
-    <li><a href="#">Another action</a></li>
-    <li><a href="#">Something else here</a></li>
-    <li role="separator" className="divider"></li>
-    <li><a href="#">Separated link</a></li>
-  </ul>
-</div>	
-	
-	
-);
-*/
-	return (
-    <ul className="dropdown-menu ">
-      <MenuItem header>Header</MenuItem>
-      <MenuItem>link</MenuItem>
-      <MenuItem divider/>
-      <MenuItem header>Header</MenuItem>
-      <MenuItem>link</MenuItem>
-      <MenuItem disabled>disabled</MenuItem>
-      <MenuItem title="See? I have a title.">
-        link with title
-      </MenuItem>
-      <MenuItem eventKey={1} href="#someHref" onSelect={onSelectAlert}>
-        link that alerts
-      </MenuItem>
-    </ul>
-	);
-	
-	return (
-  <Clearfix>
-    <ul className="dropdown-menu open">
-      <MenuItem header>Header</MenuItem>
-      <MenuItem>link</MenuItem>
-      <MenuItem divider/>
-      <MenuItem header>Header</MenuItem>
-      <MenuItem>link</MenuItem>
-      <MenuItem disabled>disabled</MenuItem>
-      <MenuItem title="See? I have a title.">
-        link with title
-      </MenuItem>
-      <MenuItem eventKey={1} href="#someHref" onSelect={onSelectAlert}>
-        link that alerts
-      </MenuItem>
-    </ul>
-  </Clearfix>);
-
-
-	
+	};
 };
 
 
+class Word extends React.Component {
 
-module.exports = React.createClass({
-
-	getInitialState(){
-
-		return {}
-	},
-	
+	constructor(...args) {
+		super(...args);
+	};
 
 	render() {
-		return (
-			<Grid>
-				<Row>
-					<Col md={3}>
-						HEJ
-					</Col>
-					<Col md={3}>
-						HEJ
-					</Col>
-					<Col md={3}>
-						HEJ
-					</Col>
-					<Col md={3}>
-						HEJ
-					</Col>
-				</Row>
-				<Row>
-					
-					<Example>
-						XXX
-					</Example>
-					<br/>
-					gfsdkgjhdfg
-					
+		var style = {};
 
-				</Row>
-				<Row>
-				</Row>
-			</Grid>
+		var letters = this.props.word.split('');
+		var nodes = [];
+
+		letters.forEach(function(letter, index) {
+			nodes.push(
+				<Letter letter={letter} key={index}/>
+			);
+		});
+		return(
+			<div style={style}>
+				{nodes}
+			</div>
 		);
 
+	};
+};
+
+module.exports = class Page extends React.Component {
+
+
+	constructor(...args) {
+
+		super(...args);
+	};
+
+
+
+
+	render() {
+
+		return (
+			<Grid style={{fontSize:'125%'}}>
+				<h3>
+					Spelregler
+				</h3>
+				<p>
+					WordPong är ett spel som kan liknas vid bordtennins. Fast istället för en boll som spelas fram och tillbaka
+					över nätet, är det ett ord.
+					Spelreglerna är enkla. Skapa ett <strong>så långt ord som möjligt</strong> och retunera detta till motståndaren.
+				</p>
+
+				<h4>
+					Exempel
+				</h4>
+				<p>
+					Låt oss ta ett exempel. Spelare A och spelare B, Anna och Benjamin, spelar mot varandra. Anna börjar
+					med att <em>serva</em>. Detta gör hon genom att hon får en uppsättning bokstäver att skapa ett ord utav.
+					Ordet ska vara så långt som möjligt och måste finnas i Svenska Akademiens Ordlista för att vara giltigt.
+				</p>
+				<p>
+					Anna hittar bokstäver till ordet <strong>FÖRETAGSKULTUR</strong>.
+				</p>
+				<p style={{textAlign:'center'}}>
+					<Word word='FÖRETAGSKULTUR'/>
+				</p>
+				<p>
+					Hon ska nu serva detta ord till Benjamin. Eftersom Benjamins uppgift är
+					att lista ut vilket ord hon servat passar det ju bra att skruva serven, dvs blanda bokstäverna.
+					Anna väljer att skicka bokstäverna i denna ordning.
+				</p>
+
+				<p style={{textAlign:'center'}}>
+					<Word word='EAUUÖKRTTGSLRF'/>
+				</p>
+
+				<p>
+					I WordPong är varje bokstav värt ett visst antal poäng. Summerar man bokstävernas värde
+					blir det 30 poäng i detta fall, men mer om bokstävernas värde senare. Anna får nu
+					30 poäng för det ord hon servat. Ställningen är nu <strong>30-0</strong> till Anna och bollen är igång!
+				</p>
+				<p>
+					Benjamin får Annas serve och ska nu bilda ett så långt ord som möjligt av dessa bokstäver.
+					Men det är ett långt ord och Benjamin kan inte se att bokstäverna bildar
+					ordet <strong>FÖRETAGSKULTUR</strong>.
+
+					Istället hittar Benjamin ordet <strong>STRUKTUR</strong>.
+				</p>
+
+				<p style={{textAlign:'center'}}>
+					<Word word='STRUKTUR'/>
+				</p>
+
+				<p>
+					För detta får Benjamin 16 poäng eftersom summan av bokstävernas värde är just 16.
+					Dessa poäng tar han från Anna eftersom han listat ut en del av hennes ord.
+					Ställningen är nu <strong>14-16</strong>.
+
+					Nu är det Benjamins tur att returnera Annas serve och väljer då att skicka bokstäverna
+					i denna ordning.
+				</p>
+
+				<p style={{textAlign:'center'}}>
+					<Word word='UUSTTRRK'/>
+				</p>
+
+				<p>
+					Anna får alltså bokstäverna <strong>UUSTTRRK</strong>. Hon kan inte se
+					hela det tänkta ordet <strong>STRUKTUR</strong> utan bara ordet <strong>KUST</strong> som bildar 9 poäng. Anna
+					får dessa och ställningen
+					är nu <strong>23-17</strong>.
+				</p>
+
+				<p style={{textAlign:'center'}}>
+					<Word word='KUST'/>
+				</p>
+
+				<p>
+					Hon väljer att skicka bokstäverna i denna ordning till Benjamin.
+				</p>
+
+				<p style={{textAlign:'center'}}>
+					<Word word='UTSK'/>
+				</p>
+
+				<p>
+					Nu är det så få bokstäver kvar så Benjamin ser direkt att bokstäverna bildar
+					ordet <strong>KUST</strong>. Dessa bokstäver var ju värda 9 poäng så dessa
+					tar han tillbaka från Anna.
+
+					Eftersom Benjamin hittade hela ordet finns ju inga bokstäver
+					kvar och bollen är därför slutspelad. Ställningen är nu <strong>14-16</strong>.
+				</p>
+
+				<p>
+					Nu är det Benjamins tur att serva eftersom Anna servade förra bollen.
+					Då får han, precis som Anna, en helt ny uppsättning bokstäver att skapa ett nytt ord av
+					som han skickar till Anna. En ny boll kan nu påbörjas!
+				</p>
+
+
+
+			</Grid>
+		);
 	}
 
-});
-
+};

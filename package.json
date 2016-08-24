@@ -6,8 +6,10 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "watchify ./app/components/app.js -v -d -t [ babelify --presets [ es2015 react \"stage-2\"] ] -t node-lessify -o index.js",
-    "build": "browserify ./app/components/app.js -v -d -t [ babelify --presets [ es2015 react \"stage-2\"] ] -t node-lessify -o index.js "
+    "watch": "watchify   ./app/components/app.js -v -d -t [babelify --presets [ es2015 react \"stage-2\"] ] -t node-lessify -o index.js",
+    "build-debug": "browserify ./app/components/app.js -v -d -t [babelify --presets [ es2015 react \"stage-2\"] ] -t node-lessify -o index.js",
+    "build": "browserify ./app/components/app.js -v -d -t [babelify --presets [ es2015 react \"stage-2\"] ] -t node-lessify  | uglifyjs -c > index.js",
+	"public": "cp -r assets index.js index.html ~/Dropbox/Public/word-pong"
   },
   "author": "meg768",
   "license": "MIT",
@@ -19,6 +21,7 @@
     "bluebird": "^3.4.1",
     "client-request": "^1.0.1",
     "cssify": "^1.0.3",
+    "jquery": "^3.1.0",
     "moment": "^2.14.1",
     "node-lessify": "^0.1.4",
     "react": "^15.3.1",
@@ -26,7 +29,9 @@
     "react-dom": "^15.3.1",
     "react-router": "^2.7.0",
     "react-spinkit": "^1.1.10",
+    "uglify-js": "^2.7.3",
     "ursa-purejs": "0.0.3",
+    "yow": "^1.0.20",
     "yql": "^1.0.2"
   },
   "devDependencies": {}
