@@ -4,6 +4,7 @@ import {extend, isString, isObject, isArray} from '../../scripts/toolbox.js';
 
 import {sprintf} from 'yow';
 
+require('./home.less');
 
 module.exports = class Page extends React.Component {
 

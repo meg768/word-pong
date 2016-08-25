@@ -4,6 +4,8 @@ import {extend, isString, isObject, isArray} from '../../scripts/toolbox.js';
 
 import {sprintf} from 'yow';
 
+require('./about.less');
+
 class Letter extends React.Component {
 
 	constructor(...args) {
@@ -14,23 +16,23 @@ class Letter extends React.Component {
 		var style = {};
 		var innerStyle = {};
 
-		style.border = '0.1em solid hsl(212, 50% , 75%)';
+		style.border = '0.12em solid hsl(212, 50% , 75%)';
 		style.display = 'inline-block';
 		style.borderRadius = '0.3em';
 		style.width = '1.5em';
 		style.height = '1.5em';
 		style.fontSize = '150%';
 		style.textAlign = 'center';
-		style.background = 'hsl(212,50%,90%)';
+		//style.background = 'hsl(212,50%,90%)';
 		style.margin = '0.1em 0.1em 0.1em 0.1em';
 
 		innerStyle.position = 'relative';
 		innerStyle.top = '50%';
 		innerStyle.transform = 'translateY(-50%)';
-		innerStyle.color = 'hsl(212,50%,0%)';
+		//innerStyle.color = 'hsl(212,50%,0%)';
 
 		return(
-			<div style={style}>
+			<div className='letter' style={style}>
 				<div style={innerStyle}>
 					{this.props.letter}
 				</div>
@@ -81,7 +83,7 @@ module.exports = class Page extends React.Component {
 	render() {
 
 		return (
-			<Grid style={{fontSize:'125%'}}>
+			<Grid className='about' style={{fontSize:'125%'}}>
 				<h3>
 					Spelregler
 				</h3>
