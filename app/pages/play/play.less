@@ -1,7 +1,7 @@
 @import '../../less/mixins.less';
 @import '../../less/variables.less';
 
-.drag {
+.play {
 
 	//border: 1px solid @xxx-lightGrayColor;
 	position:absolute;
@@ -16,6 +16,11 @@
 		height:100%;
 	}
 
+	.letter {
+		&.selected {
+			background-color: red;
+		}
+	}
 	.footer {
 		position: fixed;
 		bottom: 0px;

@@ -4,70 +4,11 @@ import {extend, isString, isObject, isArray} from '../../scripts/toolbox.js';
 
 import {sprintf} from 'yow';
 
+import {Letter} from '../../components/letter.js';
+import {Word} from '../../components/word.js';
+
 require('./about.less');
 
-class Letter extends React.Component {
-
-	constructor(...args) {
-		super(...args);
-	};
-
-	render() {
-		var style = {};
-		var innerStyle = {};
-
-		style.border = '0.12em solid hsl(212, 50% , 75%)';
-		style.display = 'inline-block';
-		style.borderRadius = '0.3em';
-		style.width = '1.5em';
-		style.height = '1.5em';
-		style.fontSize = '150%';
-		style.textAlign = 'center';
-		//style.background = 'hsl(212,50%,90%)';
-		style.margin = '0.1em 0.1em 0.1em 0.1em';
-
-		innerStyle.position = 'relative';
-		innerStyle.top = '50%';
-		innerStyle.transform = 'translateY(-50%)';
-		//innerStyle.color = 'hsl(212,50%,0%)';
-
-		return(
-			<div className='letter' style={style}>
-				<div style={innerStyle}>
-					{this.props.letter}
-				</div>
-			</div>
-		);
-
-	};
-};
-
-
-class Word extends React.Component {
-
-	constructor(...args) {
-		super(...args);
-	};
-
-	render() {
-		var style = {};
-
-		var letters = this.props.word.split('');
-		var nodes = [];
-
-		letters.forEach(function(letter, index) {
-			nodes.push(
-				<Letter letter={letter} key={index}/>
-			);
-		});
-		return(
-			<div style={style}>
-				{nodes}
-			</div>
-		);
-
-	};
-};
 
 module.exports = class Page extends React.Component {
 
@@ -75,7 +16,13 @@ module.exports = class Page extends React.Component {
 	constructor(...args) {
 
 		super(...args);
+
+		this.onClick = this.onClick.bind(this);
 	};
+
+	onClick() {
+		window.history.back();
+	}
 
 
 
@@ -83,14 +30,79 @@ module.exports = class Page extends React.Component {
 	render() {
 
 		return (
-			<Grid className='about' style={{fontSize:'125%'}}>
+			<Grid className='about' style={{fontSize:'14px'}}>
+
 				<h3>
-					Spelregler
+					Spelregler (version 2)
+				</h3>
+				<h4>
+					Exempel
+				</h4>
+				<p>
+					Låt oss ta ett exempel. Spelare A och spelare B, Anna och Benjamin, spelar mot varandra. Anna börjar
+					genom att hon får en uppsättning bokstäver att skapa ett ord utav.
+					Ordet ska vara så långt som möjligt och måste finnas i Svenska Akademiens Ordlista för att vara giltigt.
+				</p>
+				<p>
+					Anna hittar bokstäver till ordet <strong>FÖRETAGSKULTUR</strong>.
+				</p>
+				<p style={{textAlign:'center'}}>
+					<Word word='FÖRETAGSKULTUR'/>
+				</p>
+
+				<p>
+					Hon ska nu presentera detta ord till Benjamin. Eftersom Benjamins uppgift är
+					att lista ut vilket ord hon kommit på passar det ju bra att blanda bokstäverna.
+					Anna väljer att skicka bokstäverna i denna ordning.
+				</p>
+
+
+				<p style={{textAlign:'center'}}>
+					<Word word='EAUUÖKRTTGSLRF'/>
+				</p>
+
+
+				<p>
+
+					Skulle Benjamin hitta ordet, sorterar han bokstäverna så att ordet bildar
+					<strong>FÖRETAGSKULTUR</strong>
+					och trycker på knappen <strong>SKICKA</strong>. Då har han gissat ordet i sin helhet
+					och får därför ordets 30 poäng
+					(i WordPong är varje bokstav värt ett visst antal poäng. Summerar man bokstävernas värde
+					blir det 30 poäng i detta fall, men mer om bokstävernas värde senare).
+				</p>
+				<p>
+					Nu gör han inte det. Detta var för svårt.
+					Därför använder han en livlina och frågar Anna var bokstaven <strong>Ö</strong> ska
+					vara placerad (detta kostar poäng, lika många poäng som bokstaven <strong>Ö</strong> är värd).
+
+				</p>
+
+				<p style={{textAlign:'center'}}>
+					<Word word='-Ö------------'/>
+				</p>
+
+				<p>
+					Detta var ledtråden Benjamin behövde för att kunna gissa ordet.
+					Han sorterar bokstäverna så ordet bildas och trycker på knappen <strong>SKICKA</strong>.
+
+					Eftersom han behövde en ledtråd för att kunna lista ut ordet får han
+					inte hela ordets poängvärde utan bara 26 poäng eftersom bokstaven Ö är värd 4 poäng.
+				</p>
+
+
+
+
+
+
+
+				<h3>
+					Spelregler (verion 1)
 				</h3>
 				<p>
 					WordPong är ett spel som kan liknas vid bordtennins. Fast istället för en boll som spelas fram och tillbaka
 					över nätet, är det ett ord.
-					Spelreglerna är enkla. Skapa ett <strong>så långt ord som möjligt</strong> och retunera detta till motståndaren.
+					Spelreglerna är mycket enkla. Skapa ett <strong>så långt ord som möjligt</strong> och retunera detta till motståndaren.
 				</p>
 
 				<h4>
@@ -181,6 +193,9 @@ module.exports = class Page extends React.Component {
 					som han skickar till Anna. En ny boll kan nu påbörjas!
 				</p>
 
+				<div style={{textAlign:'center', padding:'0.5em'}}>
+					<Button bsStyle='primary' onClick={this.onClick}>OK, jag fattar</Button>
+				</div>
 
 
 			</Grid>

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import EventsMixin from './eventsmixin.js';
 
 import {isFunction, sprintf, extend} from '../../scripts/toolbox.js';
+import $ from "jquery";
 
 var Draggable = module.exports = {};
 
