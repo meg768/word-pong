@@ -20,7 +20,7 @@ class DesktopIcon extends React.Component {
 
 	constructor(props) {
 		super(props);
-console.log('creating icon');
+
 		this.state = {};
 	}
 
@@ -32,8 +32,14 @@ console.log('creating icon');
 
 		this.refs.draggable.on('dragStart', function(event) {
 
-			if (self.props.events)
-				self.props.events.emit('dragStart', self);
+			if (self.props.locked) {
+				event.preventDefault();
+			}
+			else {
+				if (self.props.events)
+					self.props.events.emit('dragStart', self);
+
+			}
 
 		});
 
@@ -96,7 +102,7 @@ console.log('creating icon');
 
 
 		return (
-			<Draggable.Item ref='draggable' draggable={!this.props.locked} initialX={this.props.initialX} initialY={this.props.initialY} style={style} >
+			<Draggable.Item ref='draggable' draggable={!this.props.locked} position={this.props.position} style={style} >
 				{this.renderLock()}
 				{this.renderLetter()}
 			</Draggable.Item>
@@ -168,19 +174,21 @@ class Desktop extends React.Component {
 
 	}
 
+	range(min, max, step) {
+		var items = [];
+		for (var i = min; i < max; i+= step) {
+			items.push(i);
+		}
+		//return items[Math.floor((Math.random() * items.length))];
+		return random(items);
+	};
+
 	componentDidMount() {
 
-		function range(min, max, step) {
-			var items = [];
-			for (var i = min; i < max; i+= step) {
-				items.push(i);
-			}
-			//return items[Math.floor((Math.random() * items.length))];
-			return random(items);
-		}
 
 		var wordpong = JSON.parse(localStorage.getItem('wordpong') || '{}');
 		var word = 'WORDPONG';
+		var self = this;
 
 		if (wordpong && wordpong.word) {
 			word = wordpong.word;
@@ -190,7 +198,14 @@ class Desktop extends React.Component {
 		var items = [];
 
 		letters.forEach(function(letter, index) {
-			items.push({locked:false, letter:letter, id:index, selected:false, initialX:range(10, 90, 5) + '%', initialY:range(10, 90, 5) + '%'});
+			var item = {};
+			item.locked   = false;
+			item.selected = false;
+			item.id       = index;
+			item.letter   = letter;
+			item.position = {x:self.range(10, 90, 5) + '%', y:self.range(10, 90, 5) + '%'};
+
+			items.push(item);
 		});
 
 		this.listen();
@@ -215,23 +230,33 @@ class Desktop extends React.Component {
 
 	mix() {
 	//	var children = React.Children.toArray(this.refs.draggable.props.children);
-		var items = this.state.items;
+		var items = [];
 		var self = this;
 
-		items.forEach(function(item) {
+		this.state.items.forEach(function(item) {
 			var child = self.refs[item.id];
 			var element = $(ReactDOM.findDOMNode(child));
 			//console.log(item.letter, element.offset());
 
+
+			var state = {};
+			state.x = '50%';
+			state.y = '50%';
+			state.animate = true;
+			if (child.refs.draggable.props.draggable)
+				child.refs.draggable.setState(state);
 			//console.log(item);
-			item.initialX = '50%';
-			item.initialY = '50%';
-			item.locked = true;
-//			console.log(item);
+			//item.position = {x:'50%', y:'50%'};
+			//item.locked = !item.locked;
+			//item.selected = !item.selected;
+			//item.position = {x:self.range(10, 90, 5) + '%', y:self.range(10, 90, 5) + '%'};
+
+			//items.push(extend({}, item));
+			console.log(item);
 
 		});
-//		items.pop();
-		this.setState({items:items});
+
+		//this.setState({items:items});
 /*
 		for (var index = 0; index < 100; index++) {
 			var child = this.refs[sprintf('item-%02d', index)];
@@ -291,10 +316,18 @@ class Desktop extends React.Component {
 
 		function renderItems() {
 			var items = [];
-console.log('rendering items');
+
 			_this.state.items.forEach(function(item, index) {
 				items.push(
-					<DesktopIcon ref={item.id} locked={item.locked} events={_this.events} key={index} id={item.id} selected={item.selected} letter={item.letter} initialX={item.initialX} initialY={item.initialY}/>
+					<DesktopIcon
+						ref={item.id}
+						locked={item.locked}
+						events={_this.events}
+						key={index}
+						id={item.id}
+						selected={item.selected}
+						letter={item.letter}
+						position={item.position}/>
 				);
 
 			});

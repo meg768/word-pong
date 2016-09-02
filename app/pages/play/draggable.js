@@ -56,8 +56,7 @@ Draggable.Item = React.createClass({
 			onDragStart: null,
 			onDragEnd: null,
 			draggable: true,
-			initialX: 0,
-			initialY: 0,
+			position: {x:0, y:0},
 			style: {
 			}
 		}
@@ -67,16 +66,20 @@ Draggable.Item = React.createClass({
 
 		var state = {};
 
-		state.x         = this.props.initialX;
-		state.y         = this.props.initialY;
+		state.x         = this.props.position.x;
+		state.y         = this.props.position.y;
 		state.animate   = false;
-		state.selected  = true;
+		state.dragged   = false;
 		state.dragging  = false;
-		state.draggable = this.props.draggable;
 		state.zIndex    = -1;
+
 
 		return state;
 
+	},
+
+	componentDidMount() {
+		//this.setState({x:this.props.position.x, y:this.props.position.y});
 	},
 
 
@@ -84,22 +87,25 @@ Draggable.Item = React.createClass({
 
 		var _this = this;
 
+
 		if (isFunction(_this.props.onDragStart)) {
 
 			_this.props.onDragStart(event);
 
-			if (event.defaultPrevented)
-				return;
 		}
 
 		_this.emit('dragStart', event);
 
+		if (event.defaultPrevented)
+			return;
+
+//		if (!_this.props.draggable)
+//			return;
+
+
 
 		// Only left mouse button
 		if (event.button != undefined && event.button !== 0)
-			return;
-
-		if (!_this.state.draggable)
 			return;
 
 		var pageX = undefined;
@@ -161,6 +167,7 @@ Draggable.Item = React.createClass({
 
 			state.animate  = false;
 			state.dragging = true;
+			state.dragged  = true;
 			state.x        = position.left + offsetX;
 			state.y        = position.top + offsetY;
 
@@ -238,11 +245,11 @@ Draggable.Item = React.createClass({
 
 		if (this.state.zIndex != undefined) {
 			style.zIndex = ++zIndex;
-
 		}
 
 		style.left     = this.state.x;
 		style.top      = this.state.y;
+
 		style.position = 'absolute';
 
 		if (this.state.dragging)
