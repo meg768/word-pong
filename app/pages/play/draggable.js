@@ -1,34 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EventsMixin from './eventsmixin.js';
-
-import {isFunction, sprintf, extend} from '../../scripts/toolbox.js';
+import {isFunction, sprintf, extend} from 'yow';
 import $ from "jquery";
 
-var Draggable = module.exports = {};
 
 
+export class DraggableContainer extends React.Component {
 
-Draggable.Container = React.createClass({
 
-	getInitialState(){
-		return {
-		};
-	},
+	constructor(props) {
+		super(props);
 
-	getDefaultProps() {
-
-		return {
-			style: {
-			}
-		};
-	},
+		this.state = {};
+	}
 
 
 	render() {
 
 		var {style, ...other} = this.props;
-
 
 		// Make sure this div is relative
 		style.position = 'relative';
@@ -39,31 +28,22 @@ Draggable.Container = React.createClass({
 			</div>
 		);
 
-	}
+	};
 
-});
+};
 
+
+DraggableContainer.defaultProps = {
+	style:{}
+};
 
 var zIndex = 0;
 
-Draggable.Item = React.createClass({
-
-	mixins: [EventsMixin],
+export class DraggableItem extends React.Component {
 
 
-	getDefaultProps() {
-		return {
-			onDragStart: null,
-			onDragEnd: null,
-			draggable: true,
-			position: {x:0, y:0},
-			style: {
-			}
-		}
-	},
-
-	getInitialState() {
-
+	constructor(props) {
+		super(props);
 		var state = {};
 
 		state.x         = this.props.position.x;
@@ -73,14 +53,13 @@ Draggable.Item = React.createClass({
 		state.dragging  = false;
 		state.zIndex    = -1;
 
-
-		return state;
-
-	},
+		this.state = state;
+		this.onMouseDown = this.onMouseDown.bind(this);
+	};
 
 	componentDidMount() {
 		//this.setState({x:this.props.position.x, y:this.props.position.y});
-	},
+	};
 
 
 	onMouseDown(event) {
@@ -88,13 +67,8 @@ Draggable.Item = React.createClass({
 		var _this = this;
 
 
-		if (isFunction(_this.props.onDragStart)) {
+		_this.props.onDragStart(event);
 
-			_this.props.onDragStart(event);
-
-		}
-
-		_this.emit('dragStart', event);
 
 		if (event.defaultPrevented)
 			return;
@@ -183,8 +157,8 @@ Draggable.Item = React.createClass({
 			if (state.y + size.height > bounds.height)
 				state.y = bounds.height - size.height;
 
-			state.x = 100 * (state.x / parent.innerWidth()) + '%';
-			state.y = 100 * (state.y / parent.innerHeight()) + '%';
+			state.x = 100 * (state.x / parent.innerWidth());
+			state.y = 100 * (state.y / parent.innerHeight());
 //				console.log(state.x / event.view.innerWidth, state.x / event.view.innerHeight);
 
 			_this.setState(state);
@@ -223,7 +197,7 @@ Draggable.Item = React.createClass({
 					return;
 			}
 
-			_this.emit('dragEnd', event);
+			_this.props.onDragEnd(event);
 
 			if (event.defaultPrevented)
 				return;
@@ -234,7 +208,7 @@ Draggable.Item = React.createClass({
 			event.preventDefault()
 
 		}
-	},
+	};
 
 	render() {
 		var {style, ...other} = this.props;
@@ -247,8 +221,8 @@ Draggable.Item = React.createClass({
 			style.zIndex = ++zIndex;
 		}
 
-		style.left     = this.state.x;
-		style.top      = this.state.y;
+		style.left     = this.state.x + '%';
+		style.top      = this.state.y + '%';
 
 		style.position = 'absolute';
 
@@ -266,4 +240,14 @@ Draggable.Item = React.createClass({
 		);
 
 	}
-})
+};
+
+DraggableItem.defaultProps = {
+	onDragStart: function(){},
+	onDragEnd: function(){},
+	draggable: true,
+	position: {x:0, y:0},
+	style: {
+	}
+
+};

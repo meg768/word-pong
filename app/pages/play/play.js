@@ -7,7 +7,7 @@ import EventsMixin from './eventsmixin.js';
 import {Grid, Row, Col, Button, ButtonGroup} from 'react-bootstrap';
 import {ListView, ListViewItem} from '../../components/listview.js';
 import {isFunction, sprintf, extend, random} from 'yow';
-import Draggable from './draggable.js';
+import {DraggableItem, DraggableContainer} from './draggable.js';
 
 import {Letter} from '../../components/letter.js';
 import $ from "jquery";
@@ -22,33 +22,23 @@ class DesktopIcon extends React.Component {
 		super(props);
 
 		this.state = {};
+
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
+	}
+
+	onDragStart(event) {
+		this.props.onDragStart(event, this);
+	}
+
+	onDragEnd(event) {
+
+		this.props.onDragEnd(event, this);
+
 	}
 
 	componentDidMount() {
 
-		var self = this;
-
-
-
-		this.refs.draggable.on('dragStart', function(event) {
-
-			if (self.props.locked) {
-				event.preventDefault();
-			}
-			else {
-				if (self.props.events)
-					self.props.events.emit('dragStart', self);
-
-			}
-
-		});
-
-		this.refs.draggable.on('dragEnd', function(event) {
-
-			if (self.props.events)
-				self.props.events.emit('dragEnd', self);
-
-		});
 
 
 	}
@@ -102,10 +92,10 @@ class DesktopIcon extends React.Component {
 
 
 		return (
-			<Draggable.Item ref='draggable' draggable={!this.props.locked} position={this.props.position} style={style} >
+			<DraggableItem ref='draggable' onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}  position={this.props.position} style={style} >
 				{this.renderLock()}
 				{this.renderLetter()}
-			</Draggable.Item>
+			</DraggableItem>
 		);
 
 
@@ -126,18 +116,19 @@ class Desktop extends React.Component {
 		this.events = new EventEmitter();
 
 		this.onMouseDown = this.onMouseDown.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
 	};
 
 
-	mixWord(word) {
-		var input = word.toUpperCase().split('');
+	scramble(input) {
 		var output = [];
 
 		while (input.length > 0) {
 			output.push(input.splice(random(input.length), 1)[0]);
 		}
 
-		return output.join('');
+		return output;
 	};
 
 	select(id) {
@@ -151,27 +142,30 @@ class Desktop extends React.Component {
 
 	}
 
-	listen() {
-		var self = this;
 
-		this.events.on('dragStart', function(item) {
+	onDragStart(event, item) {
+		this.select(item.props.id);
 
-			self.select(item.props.id);
-		});
+		if (item.props.locked) {
+			event.preventDefault();
+		}
 
-		this.events.on('dragEnd', function(item) {
-/*
-			var items = self.state.items;
+	}
 
-			items.forEach(function(item) {
-				item.selected = false;
-			});
-
-			self.setState({items:items});
-			*/
-		});
+	onDragEnd(event, item) {
 
 
+	}
+
+
+	scramble(input) {
+		var output = [];
+
+		while (input.length > 0) {
+			output.push(input.splice(random(input.length), 1)[0]);
+		}
+
+		return output;
 	}
 
 	range(min, max, step) {
@@ -194,7 +188,7 @@ class Desktop extends React.Component {
 			word = wordpong.word;
 		}
 
-		var letters = this.mixWord(word).split('');
+		var letters = word.split('');
 		var items = [];
 
 		letters.forEach(function(letter, index) {
@@ -203,12 +197,11 @@ class Desktop extends React.Component {
 			item.selected = false;
 			item.id       = index;
 			item.letter   = letter;
-			item.position = {x:self.range(10, 90, 5) + '%', y:self.range(10, 90, 5) + '%'};
+			item.position = {x:self.range(10, 90, 5), y:self.range(10, 90, 5)};
 
 			items.push(item);
 		});
 
-		this.listen();
 		this.setState({items:items});
 
 	};
@@ -229,20 +222,25 @@ class Desktop extends React.Component {
 	};
 
 	mix() {
-	//	var children = React.Children.toArray(this.refs.draggable.props.children);
 		var items = [];
 		var self = this;
+
+		var container = $(ReactDOM.findDOMNode(this.refs.container));
+
+		var containerWidth = container.innerWidth();
+		var containerHeight = container.innerHeight();
+
+		console.log(width, height);
 
 		this.state.items.forEach(function(item) {
 			var child = self.refs[item.id];
 			var element = $(ReactDOM.findDOMNode(child));
-			//console.log(item.letter, element.offset());
-
 
 			var state = {};
-			state.x = '50%';
-			state.y = '50%';
+			state.x = 50;
+			state.y = 50;
 			state.animate = true;
+
 			if (child.refs.draggable.props.draggable)
 				child.refs.draggable.setState(state);
 			//console.log(item);
@@ -255,51 +253,9 @@ class Desktop extends React.Component {
 			console.log(item);
 
 		});
-
-		//this.setState({items:items});
-/*
-		for (var index = 0; index < 100; index++) {
-			var child = this.refs[sprintf('item-%02d', index)];
-
-			if (!child)
-				break;
-
-//debugger;
-			var element = $(ReactDOM.findDOMNode(child));
-			console.log(element.offset(), element.innerHeight());
-		}
-		*/
-
-/*
-		React.Children.map(this.refs.draggable.props.children, function(child) {
-			if (child.type == DesktopIcon) {
-				var xx =  $(ReactDOM.findDOMNode(child));
-				var clone = React.cloneElement(child, child.props);
-				debugger;
-
-			}
-
-		});
-*/
-
 	};
-	mixx() {
-		var items = [];
-		var word = '';
 
-		this.state.items.forEach(function(item, index) {
-			word += item.letter;
-		});
 
-		var letters = this.mixWord(word).split('');
-
-		letters.forEach(function(letter, index) {
-			items.push({letter:letter, id:index});
-		});
-
-		this.setState({items:items});
-
-	};
 
 	onMouseDown(event) {
 		this.select(null);
@@ -311,22 +267,24 @@ class Desktop extends React.Component {
 
 	render() {
 
-		var _this = this;
+		var self = this;
 		var style = {};
 
 		function renderItems() {
 			var items = [];
 
-			_this.state.items.forEach(function(item, index) {
+			self.state.items.forEach(function(item, index) {
 				items.push(
 					<DesktopIcon
 						ref={item.id}
 						locked={item.locked}
-						events={_this.events}
+						events={self.events}
 						key={index}
 						id={item.id}
 						selected={item.selected}
 						letter={item.letter}
+						onDragStart={self.onDragStart}
+						onDragEnd={self.onDragEnd}
 						position={item.position}/>
 				);
 
@@ -341,9 +299,9 @@ class Desktop extends React.Component {
 		style.height  = '100%';
 
 		return (
-			<Draggable.Container ref='container' className='DesktopComponent' onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown} style={style}>
+			<DraggableContainer ref='container' className='DesktopComponent' onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown} style={style}>
 				{renderItems()}
-			</Draggable.Container>
+			</DraggableContainer>
 
 		);
 	}
