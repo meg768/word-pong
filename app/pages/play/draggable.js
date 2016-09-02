@@ -55,6 +55,7 @@ Draggable.Item = React.createClass({
 		return {
 			onDragStart: null,
 			onDragEnd: null,
+			draggable: true,
 			initialX: 0,
 			initialY: 0,
 			style: {
@@ -71,7 +72,7 @@ Draggable.Item = React.createClass({
 		state.animate   = false;
 		state.selected  = true;
 		state.dragging  = false;
-		state.draggable = true;
+		state.draggable = this.props.draggable;
 		state.zIndex    = -1;
 
 		return state;
@@ -230,6 +231,7 @@ Draggable.Item = React.createClass({
 
 	render() {
 		var {style, ...other} = this.props;
+		var classes = ['draggable'];
 
 		var style = {};
 		extend(style, this.props.style);
@@ -242,14 +244,16 @@ Draggable.Item = React.createClass({
 		style.left     = this.state.x;
 		style.top      = this.state.y;
 		style.position = 'absolute';
-		//style.opacity  = this.state.dragging ? '0.5' : '1';
+
+		if (this.state.dragging)
+			classes.push('dragging');
 
 		if (this.state.animate) {
 			style.transition = 'left 0.5s ease, top 0.3s ease';
 		}
 
 		return (
-			<div ref='root' onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown}   style={style} {...other}>
+			<div ref='root' className={classes.join(' ')} onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown}   style={style}>
 				{this.props.children}
 			</div>
 		);

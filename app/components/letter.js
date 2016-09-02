@@ -10,7 +10,6 @@ export class Letter extends React.Component {
 
 		this.onClick = this.onClick.bind(this);
 		this.state = {};
-		this.state.seleced = props.selected ? true : false;
 	};
 
 	onClick(event) {
@@ -44,7 +43,7 @@ export class Letter extends React.Component {
 		innerStyle.display = 'table-cell';
 		innerStyle.verticalAlign = 'middle';
 
-		if (this.state.selected)
+		if (this.props.selected)
 			classNames.push('selected');
 
 		if (this.props.onClick != undefined) {
