@@ -161,7 +161,6 @@ module.exports = class Page extends React.Component {
 	render() {
 
 		var buttonStyle = {};
-		buttonStyle.borderRadius = '10em';
 		buttonStyle.minWidth = '12em';
 		buttonStyle.marginLeft = '0.5em';
 		buttonStyle.marginRight = '0.5em';
@@ -182,7 +181,7 @@ module.exports = class Page extends React.Component {
 				<Grid >
 					<Row style={rowStyle}>
 						<Col style={{width:'100%', display:'inline-block', fontSize:'125%'}}>
-							Skriv in ett ord och skicka en inbjudan till vän! Glöm inte att blanda bokstäverna! 😉
+							Skriv in ett ord och skicka en inbjudan till en vän! Glöm inte att blanda bokstäverna! 😉
 						</Col>
 					</Row>
 					<Row style={rowStyle}>

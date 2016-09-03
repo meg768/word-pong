@@ -2,8 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {EventEmitter} from 'events';
 
-import EventsMixin from './eventsmixin.js';
-
 import {Grid, Row, Col, Button, ButtonGroup} from 'react-bootstrap';
 import {ListView, ListViewItem} from '../../components/listview.js';
 import {isFunction, sprintf, extend, random} from 'yow';
@@ -15,7 +13,7 @@ import $ from "jquery";
 
 require('./play.less');
 
-class DesktopIcon extends React.Component {
+class DraggableLetter extends React.Component {
 
 
 	constructor(props) {
@@ -73,7 +71,7 @@ class DesktopIcon extends React.Component {
 		//letterStyle.opacity = 0.75;
 
 		return (
-			<Letter ref='letter' style={style} letter={this.props.letter} selected={this.props.selected}/>
+			<Letter ref='letter' className='letter' style={style} letter={this.props.letter} selected={this.props.selected}/>
 
 		);
 	};
@@ -82,8 +80,8 @@ class DesktopIcon extends React.Component {
 
 		var style = {};
 //		style.width      = '6em';
-		style.textAlign  = 'center';
-		style.padding = '0.3em';
+		//style.textAlign  = 'center';
+		//style.padding = '0.0em';
 		style.zIndex     = this.props.selected ? 100 : 0;
 
 		var letterStyle = {};
@@ -92,7 +90,7 @@ class DesktopIcon extends React.Component {
 
 
 		return (
-			<DraggableItem ref='draggable' onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}  position={this.props.position} style={style} >
+			<DraggableItem ref='draggable' className='draggable' onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}  position={this.props.position} style={style} >
 				{this.renderLock()}
 				{this.renderLetter()}
 			</DraggableItem>
@@ -104,7 +102,7 @@ class DesktopIcon extends React.Component {
 };
 
 
-class Desktop extends React.Component {
+class Playground extends React.Component {
 
 
 	constructor(props) {
@@ -112,8 +110,6 @@ class Desktop extends React.Component {
 		super(props);
 		this.state = {};
 		this.state.items = [];
-
-		this.events = new EventEmitter();
 
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
@@ -136,6 +132,10 @@ class Desktop extends React.Component {
 
 		items.forEach(function(item) {
 			item.selected = id == item.id;
+
+			if (id == item.id) {
+				console.log('SELECTED');
+			}
 		});
 
 		this.setState({items:items});
@@ -204,10 +204,10 @@ class Desktop extends React.Component {
 
 		this.setState({items:items});
 
+
 	};
 
 	componentWillUnmount() {
-		this.events.removeAllListeners();
 	};
 
 	lock() {
@@ -222,36 +222,48 @@ class Desktop extends React.Component {
 	};
 
 	mix() {
-		var items = [];
+		var items = this.state.items;
 		var self = this;
+		var positions = [];
 
 		var container = $(ReactDOM.findDOMNode(this.refs.container));
 
 		var containerWidth = container.innerWidth();
 		var containerHeight = container.innerHeight();
 
-		console.log(width, height);
+		var firstChild = $(ReactDOM.findDOMNode(this.refs[0]));
+		var itemWidth  = firstChild.outerWidth();
+		var itemHeight = firstChild.outerHeight();
 
-		this.state.items.forEach(function(item) {
+		var unitX = 100 * itemWidth / containerWidth;
+		var unitY = 100 * itemHeight / containerHeight;
+
+		var cols = Math.floor(containerWidth / itemWidth);
+		var rows = Math.floor(containerHeight / itemHeight);
+
+		var offsetX = 0;
+		var offsetY = (rows - (Math.floor(this.state.items.length / cols) + 1)) / 2;
+
+		if (items.length < cols) {
+			offsetX = (cols - this.state.items.length) / 2 + 0.0;
+		}
+		//debugger;
+		items.forEach(function(item, index) {
+			positions.push({x:index % cols , y:Math.floor(index / cols)});
+		});
+
+		positions = this.scramble(positions);
+
+		items.forEach(function(item, index) {
 			var child = self.refs[item.id];
 			var element = $(ReactDOM.findDOMNode(child));
 
 			var state = {};
-			state.x = 50;
-			state.y = 50;
+			state.x = unitX * (positions[index].x + offsetX);
+			state.y = unitY * (positions[index].y + offsetY);
 			state.animate = true;
 
-			if (child.refs.draggable.props.draggable)
-				child.refs.draggable.setState(state);
-			//console.log(item);
-			//item.position = {x:'50%', y:'50%'};
-			//item.locked = !item.locked;
-			//item.selected = !item.selected;
-			//item.position = {x:self.range(10, 90, 5) + '%', y:self.range(10, 90, 5) + '%'};
-
-			//items.push(extend({}, item));
-			console.log(item);
-
+			child.refs.draggable.setState(state);
 		});
 	};
 
@@ -275,10 +287,9 @@ class Desktop extends React.Component {
 
 			self.state.items.forEach(function(item, index) {
 				items.push(
-					<DesktopIcon
+					<DraggableLetter
 						ref={item.id}
 						locked={item.locked}
-						events={self.events}
 						key={index}
 						id={item.id}
 						selected={item.selected}
@@ -299,7 +310,7 @@ class Desktop extends React.Component {
 		style.height  = '100%';
 
 		return (
-			<DraggableContainer ref='container' className='DesktopComponent' onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown} style={style}>
+			<DraggableContainer ref='container' className={this.props.className} onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown} style={style}>
 				{renderItems()}
 			</DraggableContainer>
 
@@ -327,11 +338,11 @@ module.exports =  class Page extends React.Component {
 	};
 
 	onLock() {
-		this.refs.desktop.lock();
+		this.refs.playground.lock();
 	};
 
 	onMix(event) {
-		this.refs.desktop.mix();
+		this.refs.playground.mix();
 		event.preventDefault();
 		event.stopPropagation();
 	}
@@ -344,7 +355,7 @@ module.exports =  class Page extends React.Component {
 	render() {
 
 		var buttonStyle = {};
-		buttonStyle.borderRadius = '10em';
+		//buttonStyle.borderRadius = '10em';
 //		buttonStyle.minWidth = '10em';
 		buttonStyle.marginLeft = '0.5em';
 		buttonStyle.marginRight = '0.5em';
@@ -353,15 +364,21 @@ module.exports =  class Page extends React.Component {
 
 
 			<div className='play'>
-				<Desktop ref='desktop' className='playground'>
-				</Desktop>
+				<Playground ref='playground' className='playground'>
+				</Playground>
 
 				<div className='footer'>
-						<Button style={buttonStyle} bsStyle="primary" onClick={this.onMix} >Blanda</Button>
-						<Button style={buttonStyle} bsStyle="primary" onClick={this.onLock} >
-							Lås
-						</Button>
-						<Button style={buttonStyle} bsStyle="primary" href='#/home'>Klar</Button>
+
+							<Button style={buttonStyle}  onClick={this.onMix} >
+								<img src={require('./images/mix.svg')}/>
+							</Button>
+							<Button style={buttonStyle}  onClick={this.onLock} >
+								<img src={require('./images/lock.svg')}/>
+							</Button>
+							<Button style={buttonStyle}  href='#/home'>
+								<img src={require('./images/close.svg')}/>
+							</Button>
+
 				</div>
 			</div>
 

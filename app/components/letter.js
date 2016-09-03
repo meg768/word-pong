@@ -22,7 +22,7 @@ export class Letter extends React.Component {
 	}
 
 	render() {
-		var classNames = ['letter'];
+		var classNames = [this.props.className];
 
 		var outerStyle = {};
 		var innerStyle = {};
@@ -66,4 +66,8 @@ export class Letter extends React.Component {
 		);
 
 	};
+};
+
+Letter.defaultProps = {
+	className: 'letter'
 };

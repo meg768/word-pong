@@ -100,10 +100,7 @@ export class DraggableItem extends React.Component {
 
 		}
 
-//		_this.setState({zIndex:100});
-
-
-		var element   = $(ReactDOM.findDOMNode(_this.refs.root));
+		var element   = $(ReactDOM.findDOMNode(_this.refs.container));
 		var parent    = element.parent();
 
 		var position  = element.position();
@@ -159,7 +156,6 @@ export class DraggableItem extends React.Component {
 
 			state.x = 100 * (state.x / parent.innerWidth());
 			state.y = 100 * (state.y / parent.innerHeight());
-//				console.log(state.x / event.view.innerWidth, state.x / event.view.innerHeight);
 
 			_this.setState(state);
 
@@ -189,18 +185,13 @@ export class DraggableItem extends React.Component {
 			state.animate  = true;
 			state.dragging = false;
 
-			if (isFunction(_this.props.onDragEnd)) {
-
-				_this.props.onDragEnd(event);
-
-				if (event.defaultPrevented)
-					return;
-			}
-
 			_this.props.onDragEnd(event);
 
 			if (event.defaultPrevented)
 				return;
+
+			state.x     = Math.round(_this.state.x);
+			state.y     = Math.round(_this.state.y);
 
 			_this.setState(state);
 
@@ -212,7 +203,7 @@ export class DraggableItem extends React.Component {
 
 	render() {
 		var {style, ...other} = this.props;
-		var classes = ['draggable'];
+		var classes = [this.props.className];
 
 		var style = {};
 		extend(style, this.props.style);
@@ -223,18 +214,17 @@ export class DraggableItem extends React.Component {
 
 		style.left     = this.state.x + '%';
 		style.top      = this.state.y + '%';
-
 		style.position = 'absolute';
 
 		if (this.state.dragging)
 			classes.push('dragging');
 
 		if (this.state.animate) {
-			style.transition = 'left 0.5s ease, top 0.3s ease';
+			style.transition = 'left 0.3s ease, top 0.3s ease';
 		}
 
 		return (
-			<div ref='root' className={classes.join(' ')} onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown}   style={style}>
+			<div ref='container' className={classes.join(' ')} onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown}   style={style}>
 				{this.props.children}
 			</div>
 		);
@@ -246,6 +236,7 @@ DraggableItem.defaultProps = {
 	onDragStart: function(){},
 	onDragEnd: function(){},
 	draggable: true,
+	className: 'draggable',
 	position: {x:0, y:0},
 	style: {
 	}
