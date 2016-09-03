@@ -52,9 +52,9 @@ class DraggableLetter extends React.Component {
 
 		var lockStyle = {};
 		lockStyle.position = 'absolute';
-		lockStyle.right = 0;
-		lockStyle.top = 0;
-		lockStyle.fontSize = '50%';
+		lockStyle.right = '-0.5em';
+		lockStyle.top = '-0.5em';
+		lockStyle.fontSize = '40%';
 		lockStyle.zIndex = 0;
 		lockStyle.opacity = '0.75';
 
@@ -90,7 +90,7 @@ class DraggableLetter extends React.Component {
 
 
 		return (
-			<DraggableItem ref='draggable' className='draggable' onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}  position={this.props.position} style={style} >
+			<DraggableItem ref='draggable'  onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}  position={this.props.position} style={style} >
 				{this.renderLock()}
 				{this.renderLetter()}
 			</DraggableItem>
@@ -132,29 +132,22 @@ class Playground extends React.Component {
 
 		items.forEach(function(item) {
 			item.selected = id == item.id;
-
-			if (id == item.id) {
-				console.log('SELECTED');
-			}
 		});
 
 		this.setState({items:items});
 
 	}
 
-
 	onDragStart(event, item) {
 		this.select(item.props.id);
 
 		if (item.props.locked) {
 			event.preventDefault();
+			event.stopPropagation();
 		}
-
 	}
 
 	onDragEnd(event, item) {
-
-
 	}
 
 
@@ -222,9 +215,12 @@ class Playground extends React.Component {
 	};
 
 	mix() {
-		var items = this.state.items;
 		var self = this;
 		var positions = [];
+
+		var items = this.state.items.filter(function(item) {
+			return !item.locked;
+		});
 
 		var container = $(ReactDOM.findDOMNode(this.refs.container));
 
@@ -242,10 +238,10 @@ class Playground extends React.Component {
 		var rows = Math.floor(containerHeight / itemHeight);
 
 		var offsetX = 0;
-		var offsetY = (rows - (Math.floor(this.state.items.length / cols) + 1)) / 2;
+		var offsetY = (rows - (Math.floor(items.length / cols) + 1)) / 2;
 
 		if (items.length < cols) {
-			offsetX = (cols - this.state.items.length) / 2 + 0.0;
+			offsetX = (cols - items.length) / 2 + 0.0;
 		}
 		//debugger;
 		items.forEach(function(item, index) {
@@ -270,6 +266,7 @@ class Playground extends React.Component {
 
 
 	onMouseDown(event) {
+
 		this.select(null);
 
 		event.stopPropagation();

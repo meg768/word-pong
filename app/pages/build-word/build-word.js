@@ -20,7 +20,6 @@ module.exports = class Page extends React.Component {
 		this.state.word = '';
 		this.state.mixedWord = '';
 		this.onChange = this.onChange.bind(this);
-		this.onSend = this.onSend.bind(this);
 		this.onLetterClick = this.onLetterClick.bind(this);
 		this.onMix = this.onMix.bind(this);
 		this.key = 0;
@@ -86,18 +85,6 @@ module.exports = class Page extends React.Component {
 		return mailto;
 	}
 
-	onSend() {
-
-		if (this.state.word.length > 0) {
-			var url     = sprintf('https://dl.dropboxusercontent.com/u/10627173/word-pong/index.html#new-game?word=%s', encodeURI(this.state.word));
-			var body    = sprintf('Du har fått en utmaning i WordPong. Klicka på länken %s för att spela!', url);
-			var subject = 'WordPong';
-			var mailto  = sprintf('mailto:test@example.com?subject=%s&body=%s', subject, body);
-
-			window.open(mailto);
-
-		}
-	}
 	onMix() {
 		var word = this.mixWord(this.state.word);
 		this.setState({word:word, mixedWord: word});
@@ -122,8 +109,8 @@ module.exports = class Page extends React.Component {
 
 		return letters.map(function(letter, index) {
 			return (
-				<th>
-					<Letter letter={letter} key={index} onClick={this.onLetterClick}/>
+				<th key={index}>
+					<Letter letter={letter} onClick={this.onLetterClick}/>
 				</th>
 			);
 		}, this);

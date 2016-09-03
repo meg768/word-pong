@@ -8,6 +8,10 @@ import $ from "jquery";
 export class DraggableContainer extends React.Component {
 
 
+	static defaultProps = {
+		style: {}
+	};
+
 	constructor(props) {
 		super(props);
 
@@ -33,14 +37,18 @@ export class DraggableContainer extends React.Component {
 };
 
 
-DraggableContainer.defaultProps = {
-	style:{}
-};
 
 var zIndex = 0;
 
 export class DraggableItem extends React.Component {
 
+	static defaultProps = {
+		onDragStart: function() {},
+		onDragEnd: function() {},
+		className: 'draggable',
+		position: {x:0, y:0},
+		style: {}
+	};
 
 	constructor(props) {
 		super(props);
@@ -66,17 +74,10 @@ export class DraggableItem extends React.Component {
 
 		var _this = this;
 
-
 		_this.props.onDragStart(event);
-
 
 		if (event.defaultPrevented)
 			return;
-
-//		if (!_this.props.draggable)
-//			return;
-
-
 
 		// Only left mouse button
 		if (event.button != undefined && event.button !== 0)
@@ -167,20 +168,6 @@ export class DraggableItem extends React.Component {
 		function onMouseUp(event) {
 			removeListeners();
 
-/*
-			var gridSizeX = size.width / 3;
-			var gridSizeY = size.height / 3;
-
-			var x = Math.floor(((_this.state.x + (gridSizeX / 2)) / gridSizeX)) * gridSizeX;
-			var y  = Math.floor(((_this.state.y + (gridSizeY / 2))/ gridSizeY)) * gridSizeY;
-
-			var state = {};
-			state.animate  = true;
-			state.dragging = false;
-			state.x        = x;
-			state.y        = y;
-*/
-
 			var state = {};
 			state.animate  = true;
 			state.dragging = false;
@@ -189,9 +176,6 @@ export class DraggableItem extends React.Component {
 
 			if (event.defaultPrevented)
 				return;
-
-			state.x     = Math.round(_this.state.x);
-			state.y     = Math.round(_this.state.y);
 
 			_this.setState(state);
 
@@ -224,21 +208,10 @@ export class DraggableItem extends React.Component {
 		}
 
 		return (
-			<div ref='container' className={classes.join(' ')} onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown}   style={style}>
+			<div ref='container' className={classes.join(' ')} onTouchStart={this.onMouseDown} onMouseDown={this.onMouseDown} style={style}>
 				{this.props.children}
 			</div>
 		);
 
 	}
-};
-
-DraggableItem.defaultProps = {
-	onDragStart: function(){},
-	onDragEnd: function(){},
-	draggable: true,
-	className: 'draggable',
-	position: {x:0, y:0},
-	style: {
-	}
-
 };
