@@ -72,6 +72,28 @@ export class DraggableItem extends React.Component {
 
 	onMouseDown(event) {
 
+		function getLocation(event) {
+			var pageX = undefined;
+			var pageY = undefined;
+
+			if (pageX == undefined && pageY == undefined) {
+				if (event.touches && event.touches.length == 1) {
+					pageX = event.touches[0].pageX;
+					pageY = event.touches[0].pageY;
+				}
+			}
+
+			if (pageX == undefined && pageY == undefined) {
+				if (event.pageX != undefined && event.pageX != undefined) {
+					pageX = event.pageX;
+					pageY = event.pageY;
+				}
+
+			}
+
+			return {pageX:pageX, pageY:pageY};
+
+		}
 		var _this = this;
 
 		_this.props.onDragStart(event);
@@ -83,23 +105,10 @@ export class DraggableItem extends React.Component {
 		if (event.button != undefined && event.button !== 0)
 			return;
 
-		var pageX = undefined;
-		var pageY = undefined;
+		var location = getLocation(event);
 
-		if (pageX == undefined && pageY == undefined) {
-			if (event.touches && event.touches.length == 1) {
-				pageX = event.touches[0].pageX;
-				pageY = event.touches[0].pageY;
-			}
-		}
-
-		if (pageX == undefined && pageY == undefined) {
-			if (event.pageX != undefined && event.pageX != undefined) {
-				pageX = event.pageX;
-				pageY = event.pageY;
-			}
-
-		}
+		var pageX = location.pageX;
+		var pageY = location.pageY;
 
 		var element   = $(ReactDOM.findDOMNode(_this.refs.container));
 		var parent    = element.parent();
@@ -132,8 +141,10 @@ export class DraggableItem extends React.Component {
 
 		function onMouseMove(event) {
 
-			var offsetX = event.pageX - pageX;
-			var offsetY = event.pageY - pageY;
+			var point = getLocation(event);
+
+			var offsetX = point.pageX - pageX;
+			var offsetY = point.pageY - pageY;
 
 			var state = {};
 

@@ -16,6 +16,11 @@ require('./play.less');
 class DraggableLetter extends React.Component {
 
 
+	static defaultProps = {
+		stytle: {},
+		selected: false
+	};
+
 	constructor(props) {
 		super(props);
 
@@ -52,11 +57,11 @@ class DraggableLetter extends React.Component {
 
 		var lockStyle = {};
 		lockStyle.position = 'absolute';
-		lockStyle.right = '-0.5em';
-		lockStyle.top = '-0.5em';
-		lockStyle.fontSize = '40%';
+		lockStyle.right = '-0.2em';
+		lockStyle.top = '-0.2em';
 		lockStyle.zIndex = 0;
 		lockStyle.opacity = '0.75';
+		lockStyle.transform = 'scale(0.9,0.9)';
 
 		return (
 			<div style={lockStyle}>
@@ -68,6 +73,7 @@ class DraggableLetter extends React.Component {
 
 	renderLetter() {
 		var style = {};
+
 		//letterStyle.opacity = 0.75;
 
 		return (
@@ -78,15 +84,9 @@ class DraggableLetter extends React.Component {
 
 	render() {
 
-		var style = {};
-//		style.width      = '6em';
-		//style.textAlign  = 'center';
-		//style.padding = '0.0em';
-		style.zIndex     = this.props.selected ? 100 : 0;
+		var style = extend({}, this.props.style);
 
-		var letterStyle = {};
-		//letterStyle.opacity = 0.75;
-
+		style.zIndex = this.props.selected ? 100 : 0;
 
 
 		return (
@@ -127,11 +127,20 @@ class Playground extends React.Component {
 		return output;
 	};
 
-	select(id) {
+	select(id, type) {
 		var items = this.state.items;
 
 		items.forEach(function(item) {
-			item.selected = id == item.id;
+			if (type == 'add') {
+				(id == item.id)
+					item.selected = true;
+			}
+			if (type == 'set') {
+				item.selected = id == item.id;
+			}
+			if (type == 'invert') {
+				item.selected = !item.selected;
+			}
 		});
 
 		this.setState({items:items});
@@ -139,7 +148,18 @@ class Playground extends React.Component {
 	}
 
 	onDragStart(event, item) {
-		this.select(item.props.id);
+		var items = this.state.items;
+		var id = item.props.id;
+
+		items.forEach(function(item) {
+
+			if (item.id == id) {
+				item.transform = '';
+				item.selected = !item.selected;
+			}
+		});
+
+		this.setState({items:items});
 
 		if (item.props.locked) {
 			event.preventDefault();
@@ -190,7 +210,8 @@ class Playground extends React.Component {
 			item.selected = false;
 			item.id       = index;
 			item.letter   = letter;
-			item.position = {x:self.range(10, 90, 5), y:self.range(10, 90, 5)};
+			item.transform = sprintf('rotate(%ddeg)', random(-10, 10));
+			item.position = {x:self.range(40, 60, 2), y:self.range(40, 60, 2)};
 
 			items.push(item);
 		});
@@ -209,6 +230,7 @@ class Playground extends React.Component {
 		items.forEach(function(item) {
 			if (item.selected)
 				item.locked = !item.locked;
+			item.selected = false
 		});
 
 		this.setState({items:items});
@@ -250,6 +272,15 @@ class Playground extends React.Component {
 
 		positions = this.scramble(positions);
 
+		this.state.items.forEach(function(item, index) {
+			item.selected = false;
+
+			if (item.transform)
+				item.transform = sprintf('rotate(%ddeg)', random(-5, 5));
+
+		});
+
+		this.setState({items:this.state.items});
 		items.forEach(function(item, index) {
 			var child = self.refs[item.id];
 			var element = $(ReactDOM.findDOMNode(child));
@@ -267,7 +298,13 @@ class Playground extends React.Component {
 
 	onMouseDown(event) {
 
-		this.select(null);
+		var items = this.state.items;
+
+		items.forEach(function(item) {
+			item.selected = false;
+		});
+
+		this.setState({items:items});
 
 		event.stopPropagation();
 		event.preventDefault();
@@ -279,12 +316,21 @@ class Playground extends React.Component {
 		var self = this;
 		var style = {};
 
+
+
 		function renderItems() {
 			var items = [];
 
+
 			self.state.items.forEach(function(item, index) {
+				var style = {};
+
+				if (item.transform)
+					style.transform = item.transform;
+
 				items.push(
 					<DraggableLetter
+						style = {style}
 						ref={item.id}
 						locked={item.locked}
 						key={index}

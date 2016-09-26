@@ -4,7 +4,7 @@ import {IndexRoute, hashHistory, Router, Route} from 'react-router';
 
 import {Navbar,  CollapsibleNav, NavItem, Nav, MenuItem, NavDropdown} from 'react-bootstrap';
 
-require('../less/bootstrap.css');
+
 require('../less/styles.less');
 require('../../lib/scripts/date.js');
 
